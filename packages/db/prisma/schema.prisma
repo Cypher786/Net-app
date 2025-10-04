@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  email       String @unique
+  password    String?
+  phone       String? @unique
+  membership  Boolean @default(false)
+  amount      Int     @default(1000)
+
+  membershipRecord Membership?
+}
+
+model Membership {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @unique
+  amount             Int      @default(1000)
+  status             Boolean  @default(false)
+  razorpayOrderId    String?  @unique
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  createdAt          DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
